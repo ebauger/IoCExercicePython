@@ -24,4 +24,10 @@ INSERT INTO files (name, content) VALUES ('file3.txt', 'And this is for file3.')
 
 class SQLiteFileListService(FileListService):
     def fetch_files(self) -> List[File]:
-        pass
+        files: List[File] = []
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            for row in cursor.execute("SELECT name, content FROM files"):
+                name, content = row
+                files.append({"name": name, "content": content})
+        return files
